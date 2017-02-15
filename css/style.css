@@ -1,0 +1,35 @@
+body { 
+    margin:0; 
+    padding:0; 
+}
+#map { 
+    position:fixed; 
+    top:0; 
+    bottom:0;
+    left:320px;
+    right:0;
+}
+#sidebar {
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    width:320px;
+}
+#container {
+    padding:10px;
+}
+#range-input {
+    margin-top: 10px;
+    padding-left: 16px;
+
+}
+#slider-step-value {
+    margin-top: 27px;
+    padding: 3px ;
+    background-color: #eeeeee;
+    text-align: center;
+}
+.noUi-connect{
+    left: -16px !important;
+}
