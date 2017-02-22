@@ -12,6 +12,7 @@
   <link href="css/nouislider.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
   <link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="css/jquery.simplecolorpicker.css">
 
 
 
@@ -34,9 +35,9 @@
     </div>
 
     <div class="row">
-      <div class="col s12">
+      <div class="col s10">
         <div class="input-field ">
-          <select>
+          <select name="handle">
             <!-- <option value="" disabled selected>Choose your option</option> -->
             <option value="10" selected>10 year flood</option>
             <option value="100">100 year flood</option>
@@ -44,7 +45,20 @@
           </select>
           <label>Flood Period</label>
         </div>
+      </div>
+      <div class="col s2">
+        <div class="input-field">
+          
+          <select name="colorpicker" id="colorpicker">
+            <option value="#fbd75b">Yellow</option>
+            <option value="#a4bdfc">Blue</option>
+            <option value="#ff887c">Red</option>
+          </select>
+          <label>Style</label>
+        </div>
 
+      </div>
+      <div class="col 12">
         <p>
           <input type="checkbox" class="filled-in" id="test5" />
           <label for="test5">30% increased rainfall</label>
@@ -61,6 +75,7 @@
       </div>
 
     </div>
+   
 
   </div>
 </div>
@@ -79,9 +94,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
 <script src="js/wNumb.js"></script>
 <script src="js/nouislider.js"></script>
+<script src="js/jquery.simplecolorpicker.js"></script>
 <script>
 $(document).ready(function() {
-  $('select').material_select();
+  $('select[name="handle"').material_select();
 
 });
 
@@ -101,7 +117,7 @@ noUiSlider.create(slider, {
 
 var mymap = L.map('map').setView([46.966162,  -123.802774], 13);
 
-L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FoaWx5b3VzaWYiLCJhIjoiY2l6Z3I2MDRjMDE4cjJ3bm5qZ2Z1Y3pqcCJ9.dGcoyBbChf6RIYv0-VWFKA', {
   maxZoom: 18,
   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
   '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -109,18 +125,26 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
   id: 'mapbox.streets'
 }).addTo(mymap);
 
+
+
 var layer = [];
-var color = ['#FFF0C3','#FFDE9F','#FFBF40','#ECB240','#BE9440','#967940']
+var color_yellow = ['#FFF0C3','#FFDE9F','#FFBF40','#ECB240','#BE9440','#967940']
+var color_blue = ['#CEDDFF','#96C5FF','#4094FF','#4085EC','#407ABE','#405C96']
+var color_red = ['#FFCECE','#FF9F9F','#FF4040','#EC4040','#BE4040','#964040']
 current_slider_val = 0;
 var year = 10;
 rain30 = false;
 
+color = color_yellow;
+
 layer[0] = L.esri.featureLayer({
   url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/3",
   style: function () {
-    return { color: color[0], weight: 1, opacity: 0.7, fillOpacity:1 };
+    return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
   }
 }).addTo(mymap);
+
+
 
 var stepSliderValueElement = document.getElementById('slider-step-value');
 
@@ -144,7 +168,7 @@ slider.noUiSlider.on('update', function( values, handle ) {
       layer[i] = L.esri.featureLayer({
         url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + (parseInt(values[handle])+delta),
         style: function () {
-          return { color: color[i], weight: 1, opacity: 0.7, fillOpacity:1 };
+          return { color: color[i-1], weight: 1, opacity: 1, fillOpacity:0.8 };
         }
       }).addTo(mymap);
     }
@@ -189,7 +213,7 @@ $('input[type="checkbox"]').click(function(){
   layer[0] = L.esri.featureLayer({
     url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + delta,
     style: function () {
-      return { color: color[0], weight: 1, opacity: 0.7, fillOpacity:1 };
+      return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
     }
   }).addTo(mymap);
 
@@ -197,7 +221,7 @@ $('input[type="checkbox"]').click(function(){
 
 
 // Handle Select
-$('select').on('change', function() {
+$('select[name="handle"]').on('change', function() {
   slider.noUiSlider.set(0);
   year = this.value;
 
@@ -217,10 +241,27 @@ $('select').on('change', function() {
   layer[0] = L.esri.featureLayer({
     url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + delta,
     style: function () {
-      return { color: color[0], weight: 1, opacity: 0.7, fillOpacity:1 };
+      return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
     }
   }).addTo(mymap);
-})
+});
+
+$('select[name="colorpicker"]').simplecolorpicker({
+  picker: true
+}).on('change', function() {
+  
+  if($('select[name="colorpicker"]').val() == "#a4bdfc"){
+    color = color_blue;
+  } else if ($('select[name="colorpicker"]').val() == "#fbd75b"){
+    color = color_yellow;
+  } else if ($('select[name="colorpicker"]').val() == "#ff887c"){
+    color = color_red;
+  }
+  for(var i=0;i<=parseInt(slider.noUiSlider.get());i++){
+    layer[i].setStyle({color:color[i], weight: 1, opacity: 1, fillOpacity:0.8})
+  }
+  // $(document.body).css('background-color', $('select[name="colorpicker"]').val());
+});
 
 </script>
 </body>
