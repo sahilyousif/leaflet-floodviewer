@@ -24,6 +24,10 @@ body {
     padding-left: 16px;
 
 }
+#flood-period-input {
+    margin-top: 10px;
+    padding-left: 16px;
+}
 #slider-step-value {
     margin-top: 27px;
     padding: 3px ;
@@ -39,4 +43,7 @@ body {
 }
 .simplecolorpicker {
     margin-top: 12px !important;
+}
+.noUi-value-horizontal {
+    font-size: 12px !important;
 }

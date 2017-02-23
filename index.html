@@ -35,16 +35,11 @@
     </div>
 
     <div class="row">
+     
       <div class="col s10">
-        <div class="input-field ">
-          <select name="handle">
-            <!-- <option value="" disabled selected>Choose your option</option> -->
-            <option value="10" selected>10 year flood</option>
-            <option value="100">100 year flood</option>
+        <label>Flood Period</label><br>
+        <div id="flood-period-input" ></div>
 
-          </select>
-          <label>Flood Period</label>
-        </div>
       </div>
       <div class="col s2">
         <div class="input-field">
@@ -58,13 +53,11 @@
         </div>
 
       </div>
-      <div class="col 12">
-        <p>
-          <input type="checkbox" class="filled-in" id="test5" />
-          <label for="test5">30% increased rainfall</label>
-        </p>
-
-      </div>
+      
+    </div>
+    <br><br>
+    <div class="row">
+     
       <div class="col s9">
         <label>Sea Level Rise</label><br>
         <div id="range-input" ></div>
@@ -96,10 +89,7 @@
 <script src="js/nouislider.js"></script>
 <script src="js/jquery.simplecolorpicker.js"></script>
 <script>
-$(document).ready(function() {
-  $('select[name="handle"').material_select();
 
-});
 
 var slider = document.getElementById('range-input');
 noUiSlider.create(slider, {
@@ -109,6 +99,22 @@ noUiSlider.create(slider, {
  range: {
    min: 0,
    max: 5
+ }
+});
+
+var period_slider = document.getElementById('flood-period-input');
+noUiSlider.create(period_slider, {
+ start: 0,
+ connect: 'lower',
+ step: 1,
+ pips: {
+    mode: 'count',
+    values: 4,
+    density: 30
+  },
+ range: {
+   min: 1,
+   max: 4
  }
 });
 
@@ -149,7 +155,7 @@ layer[0] = L.esri.featureLayer({
 var stepSliderValueElement = document.getElementById('slider-step-value');
 
 
-// Handle Slider
+// handle flood level Slider
 slider.noUiSlider.on('update', function( values, handle ) {
   stepSliderValueElement.innerHTML = parseInt(values[handle]) + " ft";
   if (year == 10){
@@ -185,67 +191,8 @@ slider.noUiSlider.on('update', function( values, handle ) {
 });
 
 
-// Handle Checkbox
-$('input[type="checkbox"]').click(function(){
-  if($(this).prop("checked") == true){
-    rain30 = true;
-    console.log("30% inc rain enabled")
-  }
-  else if($(this).prop("checked") == false){
-    rain30 = false
-    console.log("30% inc rain disabled")
-  }
-  
-  slider.noUiSlider.set(0);
-  mymap.removeLayer(layer[0])
 
-  if (year == 10) {
-    delta = 3;
-  } else {
-    delta = 17;
-  }
-
-  if (rain30){
-    delta = delta + 7;
-  }
-
-  console.log("layer 0 changed to " + year + "yr. Feature Layer: " + delta)
-  layer[0] = L.esri.featureLayer({
-    url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + delta,
-    style: function () {
-      return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
-    }
-  }).addTo(mymap);
-
-});
-
-
-// Handle Select
-$('select[name="handle"]').on('change', function() {
-  slider.noUiSlider.set(0);
-  year = this.value;
-
-  mymap.removeLayer(layer[0])
-  
-  if (year == 10) {
-    delta = 3;
-  } else {
-    delta = 17;
-  }
-
-  if (rain30){
-    delta = delta + 7;
-  }
-
-  console.log("layer 0 changed to " + year + "yr. Feature Layer: " + delta)
-  layer[0] = L.esri.featureLayer({
-    url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + delta,
-    style: function () {
-      return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
-    }
-  }).addTo(mymap);
-});
-
+// handle ColorPicker
 $('select[name="colorpicker"]').simplecolorpicker({
   picker: true
 }).on('change', function() {
@@ -260,7 +207,66 @@ $('select[name="colorpicker"]').simplecolorpicker({
   for(var i=0;i<=parseInt(slider.noUiSlider.get());i++){
     layer[i].setStyle({color:color[i], weight: 1, opacity: 1, fillOpacity:0.8})
   }
-  // $(document.body).css('background-color', $('select[name="colorpicker"]').val());
+});
+
+
+// label period slider
+ $('.noUi-value.noUi-value-horizontal.noUi-value-large').each(function(){
+        var val = $(this).html();
+        val = recountVal(parseInt(val));
+        $(this).html(val);
+    });
+
+    function recountVal(val){
+        switch(val){
+            case 1: return '10yr'; break;
+            case 2:return '10yr+30%';break;
+            case 3:return '100yr';break;
+            case 4:return '100yr+30%';break;
+            default :return '$10 M';break;
+        }
+    }
+
+// handle Period Slider
+period_slider.noUiSlider.on('update', function( values, handle ) {
+   slider.noUiSlider.set(0);
+  if(parseInt(values[handle]) == 1 || parseInt(values[handle]) == 2)
+  {
+    year = 10;
+  } else {
+    year = 100;
+  }
+
+  if(parseInt(values[handle]) == 2 || parseInt(values[handle]) == 4)
+  {
+    rain30 = true;
+    console.log("30% inc rain enabled")
+
+  } else {
+    rain30 = false;
+    console.log("30% inc rain disabled")
+
+  }
+
+  mymap.removeLayer(layer[0])
+  
+  if (year == 10) {
+    delta = 3;
+  } else {
+    delta = 17;
+  }
+
+  if (rain30){
+    delta = delta + 7;
+  }
+
+  console.log("layer 0 changed to " + year + "yr. Feature Layer: " + delta)
+  layer[0] = L.esri.featureLayer({
+    url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + delta,
+    style: function () {
+      return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
+    }
+  }).addTo(mymap);
 });
 
 </script>
