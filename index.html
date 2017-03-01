@@ -26,7 +26,7 @@
       <div class="row">
        <div class="col s12">
         <p  class="">
-          Select 10 year or 100 year period from the drop-down list.
+          Select 10 year or 100 year period using the first slider.
         </p>
         <p  class="">
           Use the slider bar to see how various levels of sea level rise will impact the area.
@@ -144,15 +144,16 @@ rain30 = false;
 color = color_yellow;
 
 layer[0] = L.esri.featureLayer({
-  url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/3",
+  // url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/3",
+  url: "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Floodplain/FeatureServer/3",
   style: function () {
     return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
   }
 }).addTo(mymap);
 
 
-
 var stepSliderValueElement = document.getElementById('slider-step-value');
+
 
 
 // handle flood level Slider
@@ -172,7 +173,8 @@ slider.noUiSlider.on('update', function( values, handle ) {
     {
       console.log("adding layer " + year + "yr. Feature Layer: " + (i+delta))
       layer[i] = L.esri.featureLayer({
-        url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + (parseInt(values[handle])+delta),
+        // url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + (parseInt(values[handle])+delta),
+        url: "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Floodplain/FeatureServer/" + (parseInt(values[handle])+delta),
         style: function () {
           return { color: color[i-1], weight: 1, opacity: 1, fillOpacity:0.8 };
         }
@@ -262,7 +264,9 @@ period_slider.noUiSlider.on('update', function( values, handle ) {
 
   console.log("layer 0 changed to " + year + "yr. Feature Layer: " + delta)
   layer[0] = L.esri.featureLayer({
-    url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + delta,
+    // url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + delta,
+    url: "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Floodplain/FeatureServer/" + delta,
+
     style: function () {
       return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
     }
