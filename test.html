@@ -17,11 +17,11 @@
   <body>
     <div id="map"></div>
     <script>
-      var map = L.map('map').setView([45.528, -122.680], 13);
-      L.esri.basemapLayer("Gray").addTo(map);
+      var map = L.map('map').setView([46.966162,  -123.802774], 13);
+      L.esri.basemapLayer("Topographic").addTo(map);
 
       var parks = L.esri.featureLayer({
-        url: "https://services.arcgis.com/rOo16HdIMeOBI4Mb/arcgis/rest/services/Portland_Parks/FeatureServer/0",
+        url: "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Floodplain/FeatureServer/3",
         style: function () {
           return { color: "#70ca49", weight: 2 };
         }
