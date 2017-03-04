@@ -138,17 +138,9 @@ rain30 = false;
 
 color = color_yellow;
 
-<<<<<<< HEAD
-layer[0] = L.esri.featureLayer({
-  // url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/3",
-  url: "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Floodplain/FeatureServer/3",
-  style: function () {
-    return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
-  }
-}).addTo(mymap);
-=======
 
-var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Floodplain/MapServer/";
+
+var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/floodplain_yellow/MapServer/";
 
 layer_ids = [0,1]
 
@@ -163,7 +155,6 @@ map_layer = L.esri.dynamicMapLayer({
 layer_ids.push(3)
 map_layer.setLayers(layer_ids)
 
->>>>>>> master
 
 
 var stepSliderValueElement = document.getElementById('slider-step-value');
@@ -185,18 +176,7 @@ slider.noUiSlider.on('set', function( values, handle ) {
   if(parseInt(values[handle]) > current_slider_val){
     for(var i=current_slider_val+1;i<=parseInt(values[handle]);i++)
     {
-<<<<<<< HEAD
-      console.log("adding layer " + year + "yr. Feature Layer: " + (i+delta))
-      layer[i] = L.esri.featureLayer({
-        // url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + (parseInt(values[handle])+delta),
-        url: "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Floodplain/FeatureServer/" + (parseInt(values[handle])+delta),
-        style: function () {
-          return { color: color[i-1], weight: 1, opacity: 1, fillOpacity:0.8 };
-        }
-      }).addTo(mymap);
-=======
       layer_ids.push(delta+i)
->>>>>>> master
     }
   }
 
@@ -219,17 +199,36 @@ slider.noUiSlider.on('set', function( values, handle ) {
 $('select[name="colorpicker"]').simplecolorpicker({
   picker: true
 }).on('change', function() {
+
+
+    mymap.removeLayer(map_layer);
   
-  if($('select[name="colorpicker"]').val() == "#a4bdfc"){
-    color = color_blue;
+    if($('select[name="colorpicker"]').val() == "#a4bdfc"){
+        var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/floodplain_blue/MapServer/";
+        map_layer = L.esri.dynamicMapLayer({
+          url: url,
+          opacity : 1,
+          useCors: false,
+          layers: layer_ids
+        }).addTo(mymap)
   } else if ($('select[name="colorpicker"]').val() == "#fbd75b"){
-    color = color_yellow;
+        var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/floodplain_yellow/MapServer/";
+        map_layer = L.esri.dynamicMapLayer({
+          url: url,
+          opacity : 1,
+          useCors: false,
+          layers: layer_ids
+        }).addTo(mymap)
   } else if ($('select[name="colorpicker"]').val() == "#ff887c"){
-    color = color_red;
+        var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/floodplain_red/MapServer/";
+        map_layer = L.esri.dynamicMapLayer({
+          url: url,
+          opacity : 1,
+          useCors: false,
+          layers: layer_ids
+        }).addTo(mymap);
   }
-  // for(var i=0;i<=parseInt(slider.noUiSlider.get());i++){
-  //   layer[i].setStyle({color:color[i], weight: 1, opacity: 1, fillOpacity:0.75})
-  // }
+  
 });
 
 
@@ -282,17 +281,6 @@ period_slider.noUiSlider.on('set', function( values, handle ) {
     delta = delta + 7;
   }
 
-<<<<<<< HEAD
-  console.log("layer 0 changed to " + year + "yr. Feature Layer: " + delta)
-  layer[0] = L.esri.featureLayer({
-    // url: "https://services7.arcgis.com/pKm55wmvxVfTe8RD/arcgis/rest/services/floodplain_yellow/FeatureServer/" + delta,
-    url: "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Floodplain/FeatureServer/" + delta,
-
-    style: function () {
-      return { color: color[0], weight: 1, opacity: 1, fillOpacity:0.8 };
-    }
-  }).addTo(mymap);
-=======
   for (var k = 2; k < layer_ids.length; k++)
   {
     layer_ids[k] =  delta + (k-2);
@@ -300,8 +288,6 @@ period_slider.noUiSlider.on('set', function( values, handle ) {
   map_layer.setLayers(layer_ids)
   console.log(layer_ids)
 
- 
->>>>>>> master
 });
 
 </script>
