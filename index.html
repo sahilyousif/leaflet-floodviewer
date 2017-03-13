@@ -24,78 +24,80 @@
     <div id="container">
 
       <div class="row">
-       <div class="col s12">
-       <h5>Instructions</h5>
-        <p  class="instructions">
-          Select the Flood Return Period using the first slider.
-        </p>
-        <p  class="instructions">
-          Use the second slider to see how the changes in sea level rise will impact the extent of flooding.
-        </p>
+         <div class="col s12">
+             <h5>Instructions</h5>
+             <p  class="instructions">
+              Select the Flood Return Period using the first slider.
+          </p>
+          <p  class="instructions">
+              Use the second slider to see how the changes in sea level rise will impact the extent of flooding.
+          </p>
       </div>
-    </div>
+  </div>
 
-    <div class="row">
-     
+  <div class="row">
+
       <div class="col s10">
         <label>Flood Return Period</label><br>
         <div id="flood-period-input" ></div>
 
-      </div>
-      <div class="col s2">
+    </div>
+    <div class="col s2">
         <div class="input-field">
-          
+
           <select name="colorpicker" id="colorpicker">
-            <option value="#fbd75b">Yellow</option>
+            <option value="#EDEE8F">Yellow</option>
             <option value="#a4bdfc">Blue</option>
             <option value="#ff887c">Red</option>
-          </select>
-          <label>Style</label>
-        </div>
+        </select>
+        <label>Style</label>
+    </div>
 
-      </div>
-     
-      <div class="col s12">
-        <p class="description-floodlevel">
+</div>
+
+<div class="col s12">
+    <p class="description-floodlevel">
         Flood return period reflects the spatial extent of flooding during a 10yr flood (10% probability) and a 100 yr flood (1% probability). The additional 30% discharge estimates the spatial extent of flooding for each return period with an additional estimated discharge of 30% due to changes in climatic conditions.
-        </p>
-      </div>
-      
+    </p>
+</div>
+
+</div>
+
+<div class="row">
+
+  <div class="col s9">
+    <label>Sea Level Rise above MHHW</label><br>
+    <div id="range-input" ></div>
+
+</div>
+<div class="col s3">
+    <div id="slider-step-value">0 SLR</div>
+</div>
+
+
+
+<div class="col s12">
+    <div id="legend" class="yellow-legend">
+        <span class="col s2 legend-label">0ft</span> 
+        <span class="col s8">Water Depth</span>  
+        <span class="col s2 legend-label">15ft</span>
     </div>
-    
-    <div class="row">
-     
-      <div class="col s9">
-        <label>Sea Level Rise above MHHW</label><br>
-        <div id="range-input" ></div>
+</div>
 
-      </div>
-      <div class="col s3">
-        <div id="slider-step-value">0 ft</div>
-      </div>
 
-     
-      <div class="col s9">
-        <div id="legend" class="yellow-legend">Water Depth</div>
-
-      
-     
-
-    </div>
-
-      <div class="col s12">
-        <p class="description">
+<div class="col s12">
+    <p class="description">
         This is the estimated rise above mean local Mean Higher High Water Datum (MHHW) due to climate change. These estimates do not include extreme tides (king tides). 
 
-        </p>
-      </div>
+    </p>
+</div>
 
-    </div>
+</div>
 
-    
-   
 
-  </div>
+
+
+</div>
 </div>
 
 
@@ -116,68 +118,61 @@
 <script>
 
 
-var slider = document.getElementById('range-input');
-noUiSlider.create(slider, {
- start: 0,
- connect: 'lower',
- step: 1,
- range: {
-   min: 0,
-   max: 5
+    var slider = document.getElementById('range-input');
+    noUiSlider.create(slider, {
+       start: 0,
+       connect: 'lower',
+       step: 1,
+       range: {
+         min: 0,
+         max: 6
+     }
+ });
+
+    var period_slider = document.getElementById('flood-period-input');
+    noUiSlider.create(period_slider, {
+       start: 0,
+       connect: 'lower',
+       step: 1,
+       pips: {
+        mode: 'count',
+        values: 4,
+        density: 30
+    },
+    range: {
+     min: 1,
+     max: 4
  }
 });
 
-var period_slider = document.getElementById('flood-period-input');
-noUiSlider.create(period_slider, {
- start: 0,
- connect: 'lower',
- step: 1,
- pips: {
-    mode: 'count',
-    values: 4,
-    density: 30
-  },
- range: {
-   min: 1,
-   max: 4
- }
-});
 
 
 
+    var mymap = L.map('map').setView([46.966162,  -123.802774], 13);
 
-var mymap = L.map('map').setView([46.966162,  -123.802774], 13);
-
-L.esri.basemapLayer("Topographic").addTo(mymap);
-
-
-
-var layer = [];
-
-var color_yellow = ['#FFF0C3','#FFDE9F','#FFBF40','#ECB240','#BE9440','#967940']
-var color_blue = ['#CEDDFF','#96C5FF','#4094FF','#4085EC','#407ABE','#405C96']
-var color_red = ['#FFCECE','#FF9F9F','#FF4040','#EC4040','#BE4040','#964040']
-current_slider_val = 0;
-var year = 10;
-rain30 = false;
-
-color = color_yellow;
+    L.esri.basemapLayer("Topographic").addTo(mymap);
 
 
 
-var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/floodplain_yellow/MapServer/";
+    var layer = [];
 
-layer_ids = [0,1]
+    current_slider_val = 0;
+    var year = 10;
+    rain30 = false;
 
-map_layer = L.esri.dynamicMapLayer({
-  url: url,
-  opacity : 1,
-  useCors: false,
-  layers: layer_ids
-}).addTo(mymap)
+    var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Flood_Depth_Yellow/MapServer";
+
+    layer_ids = [0,1]
+
+    map_layer = L.esri.dynamicMapLayer({
+      url: url,
+      opacity : 1,
+      useCors: false,
+      layers: layer_ids
+  }).addTo(mymap)
 
 // Add 10yr + 0 SLR
-layer_ids.push(3)
+// layer_ids.push(3)
 map_layer.setLayers(layer_ids)
 
 
@@ -188,34 +183,36 @@ var stepSliderValueElement = document.getElementById('slider-step-value');
 
 // handle flood level Slider
 slider.noUiSlider.on('set', function( values, handle ) {
-  stepSliderValueElement.innerHTML = parseInt(values[handle]) + " ft";
+  stepSliderValueElement.innerHTML = parseInt(values[handle]) + " SLR";
   if (year == 10){
-    delta = 3;
-  } else {
-    delta = 17;
-  }
-  if (rain30){
+    delta = 1;
+} else {
+    delta = 15;
+}
+if (rain30){
     delta = delta + 7;
-  }
+}
 
-  if(parseInt(values[handle]) > current_slider_val){
+if(parseInt(values[handle]) > current_slider_val){
     for(var i=current_slider_val+1;i<=parseInt(values[handle]);i++)
     {
+      layer_ids.pop()
       layer_ids.push(delta+i)
-    }
   }
+}
 
-  if(parseInt(values[handle]) < current_slider_val){
+if(parseInt(values[handle]) < current_slider_val){
     for(var i=current_slider_val;i>parseInt(values[handle]);i--)
     {
-      layer_ids.pop()
-    }
+      id = layer_ids.pop()
+      layer_ids.push(id-1)
   }
+}
 
-  map_layer.setLayers(layer_ids)
-  console.log(layer_ids)
+map_layer.setLayers(layer_ids)
+console.log(layer_ids)
 
-  current_slider_val = parseInt(values[handle])
+current_slider_val = parseInt(values[handle])
 });
 
 
@@ -227,97 +224,98 @@ $('select[name="colorpicker"]').simplecolorpicker({
 
 
     mymap.removeLayer(map_layer);
-  
+
     if($('select[name="colorpicker"]').val() == "#a4bdfc"){
-        var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/floodplain_blue/MapServer/";
+        var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Flood_Depth_Blue/MapServer";
         map_layer = L.esri.dynamicMapLayer({
           url: url,
           opacity : 1,
           useCors: false,
           layers: layer_ids
-        }).addTo(mymap);
+      }).addTo(mymap);
 
         $("#legend").attr('class', 'blue-legend');
 
-  } else if ($('select[name="colorpicker"]').val() == "#fbd75b"){
-        var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/floodplain_yellow/MapServer/";
+    } else if ($('select[name="colorpicker"]').val() == "#EDEE8F"){
+        var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Flood_Depth_Yellow/MapServer";
         map_layer = L.esri.dynamicMapLayer({
           url: url,
           opacity : 1,
           useCors: false,
           layers: layer_ids
-        }).addTo(mymap);
+      }).addTo(mymap);
 
         $("#legend").attr('class', 'yellow-legend');
 
-  } else if ($('select[name="colorpicker"]').val() == "#ff887c"){
-        var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/floodplain_red/MapServer/";
+    } else if ($('select[name="colorpicker"]').val() == "#ff887c"){
+        var url = "http://www.texascoastalatlas.com/arcgiswebadaptor/rest/services/Aberdeen/Aberdeen_Flood_Depth_Red/MapServer";
         map_layer = L.esri.dynamicMapLayer({
           url: url,
           opacity : 1,
           useCors: false,
           layers: layer_ids
-        }).addTo(mymap);
+      }).addTo(mymap);
 
         $("#legend").attr('class', 'red-legend');
-  }
-  
+    }
+
 });
 
 
 // label period slider
- $('.noUi-value.noUi-value-horizontal.noUi-value-large').each(function(){
-        var val = $(this).html();
-        val = recountVal(parseInt(val));
-        $(this).html(val);
-    });
+$('.noUi-value.noUi-value-horizontal.noUi-value-large').each(function(){
+    var val = $(this).html();
+    val = recountVal(parseInt(val));
+    $(this).html(val);
+});
 
-    function recountVal(val){
-        switch(val){
-            case 1: return '10yr'; break;
-            case 2:return '10yr+30%';break;
-            case 3:return '100yr';break;
-            case 4:return '100yr+30%';break;
-            default :return '$10 M';break;
-        }
+function recountVal(val){
+    switch(val){
+        case 1: return '10yr'; break;
+        case 2:return '10yr+30%';break;
+        case 3:return '100yr';break;
+        case 4:return '100yr+30%';break;
+        default :return '$10 M';break;
     }
+}
 
 // handle Period Slider
 period_slider.noUiSlider.on('set', function( values, handle ) {
    // slider.noUiSlider.set(0);
-  if(parseInt(values[handle]) == 1 || parseInt(values[handle]) == 2)
-  {
+   if(parseInt(values[handle]) == 1 || parseInt(values[handle]) == 2)
+   {
     year = 10;
-  } else {
+} else {
     year = 100;
-  }
+}
 
-  if(parseInt(values[handle]) == 2 || parseInt(values[handle]) == 4)
-  {
+if(parseInt(values[handle]) == 2 || parseInt(values[handle]) == 4)
+{
     rain30 = true;
     console.log("30% inc rain enabled")
 
-  } else {
+} else {
     rain30 = false;
     console.log("30% inc rain disabled")
 
-  }
+}
 
-  
-  if (year == 10) {
-    delta = 3;
-  } else {
-    delta = 17;
-  }
 
-  if (rain30){
+if (year == 10) {
+    delta = 1;
+} else {
+    delta = 15;
+}
+
+if (rain30){
     delta = delta + 7;
-  }
+}
 
-  for (var k = 2; k < layer_ids.length; k++)
-  {
-    layer_ids[k] =  delta + (k-2);
-  }
+  // for (var k = 2; k < layer_ids.length; k++)
+  // {
+    layer_ids[1] =  delta + current_slider_val;
+
+  // }
   map_layer.setLayers(layer_ids)
   console.log(layer_ids)
 
